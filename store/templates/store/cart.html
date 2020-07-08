@@ -1,5 +1,43 @@
 {% extends 'store/main.html' %}
 {% load static %}
 {% block content %}
-<h3>Cart</h3>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box-element">
+            <a class="btn btn-secondary mb-3" href="{% url 'store' %}">&#x2190; Wróć do sklepu</a>
+            <table class="table">
+                <tr>
+                    <th><h5>Przedmioty: 3</h5></th>
+                    <th><h5>Koszt całości: 59.97 zł</h5></th>
+                    <th>
+                        <a style="float: right; margin: 0 8px;" class="btn btn-success" href="{% url 'checkout' %}">Do kasy</a>
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div class="box-element">
+            <div class="cart-row">
+                <div style="flex:2"></div>
+                <div style="flex:2"><strong>Nazwa</strong></div>
+                <div style="flex:1"><strong>Cena</strong></div>
+                <div style="flex:1"><strong>Ilość</strong></div>
+                <div style="flex:1"><strong>Całość</strong></div>
+            </div>
+            <div class="cart-row">
+                <div style="flex:2"><img class="row-image" src="{% static 'images/placeholder.png' %}"></div>
+                <div style="flex:2"><p>Produkt 1</p></div>
+                <div style="flex:1"><p>49,90 zł</p></div>
+                <div style="flex:1">
+                    <p class="quantity">2</p>
+                    <div class="quantity">
+                        <a href="#" class="btn">+</a>
+                        <a href="#" class="btn">-</a>
+                    </div>
+                </div>
+                <div style="flex:1"><p>132,90 zł</p></div>
+            </div>
+        
+        </div>
+    </div>
+</div>
 {% endblock content %}

@@ -1,5 +1,61 @@
 {% extends 'store/main.html' %}
 {% load static %}
 {% block content %}
-<h3>Checkout</h3>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="box-element" id="form-wrapper">
+            <form id="form">
+                <div id="user-info">
+                    <p>Dane osobowe:</p>
+                    <hr>
+                    <div class="form-field">
+                        <input required type="text" class="form-control" name="firstname" placeholder="Imię...">
+                    </div>
+                    <div class="form-field">
+                        <input required type="text" class="form-control" name="lastname" placeholder="Nazwisko...">
+                    </div>
+                    <div class="form-field">
+                        <input required type="email" class="form-control" name="email" placeholder="Email...">
+                    </div>
+                </div>
+                <div id="shopping-info">
+                    <hr>
+                    <p>Adres do wysyłki:</p>
+                    <hr>
+                    <div class="form-field">
+                        <input type="text" class="form-control" name="address" placeholder="Adres...">
+                    </div>
+                    <div class="form-field">
+                        <input type="text" class="form-control" name="zipcode" placeholder="Kod pocztowy...">
+                    </div>
+                    <div class="form-field">
+                        <input type="text" class="form-control" name="city" placeholder="Miasto...">
+                    </div>
+                </div>
+                <hr>
+                <input type="submit" value="Kontynuuj" id="form-button" class="btn btn-success btn-block">
+            </form>
+        </div>
+        <div class="box-element hidden" id="payment-info">
+            <small>Opcje płatności</small>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+            <a href="{% url 'cart' %}" class="btn btn-secondary">&#x2190; Wróć do koszyka</a>
+            <hr>
+            <h3>Podsumowanie zamówienia</h3>
+            <hr>
+            <div class="cart-row">
+                <div style="flex:2"><img src="{% static 'images/placeholder.png' %}" class="row-image"></div>
+                <div style="flex:2"><p>Produkt 1</p></div>
+                <div style="flex:1"><p>49,99 zł</p></div>
+                <div style="flex:1"><p>x2</p></div>
+            </div>
+            <h5>Przedmiotów: 2</h5>
+            <h5>Całość: 99,98 zł</h5>
+        </div>
+        
+    </div>
+</div>
 {% endblock content %}
