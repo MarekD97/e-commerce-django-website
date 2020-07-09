@@ -31,8 +31,8 @@
                 <div style="flex:1">
                     <p class="quantity">{{item.quantity}}</p>
                     <div class="quantity">
-                        <a href="#" class="btn">+</a>
-                        <a href="#" class="btn">-</a>
+                        <button data-product={{item.product.id}} data-action="add" class="btn update-cart">+</button>
+                        <button data-product={{item.product.id}} data-action="remove" class="btn update-cart">-</button>
                     </div>
                 </div>
                 <div style="flex:1"><p>{{item.get_total|floatformat:2}} zł</p></div>

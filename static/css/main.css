@@ -31,8 +31,13 @@ body {
     background-color: #ffffff;
     border-bottom: #f0f0f0;
     padding: 8px;
+    margin-bottom: 8px;
 }
 
 .cart-row {
     display: flex;
+}
+
+.hidden {
+    display: none;
 }
