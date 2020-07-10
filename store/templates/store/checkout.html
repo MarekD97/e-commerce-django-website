@@ -18,7 +18,7 @@
                         <input required type="email" class="form-control" name="email" placeholder="Email...">
                     </div>
                 </div>
-                <div id="shopping-info">
+                <div id="shipping-info">
                     <hr>
                     <p>Adres do wysyłki:</p>
                     <hr>
@@ -81,6 +81,7 @@
 
 
     var form = document.getElementById('form');
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         console.log('Form submitted...');
@@ -131,6 +132,10 @@
         .then((data)=> {
             console.log('Success:', data);
             alert("Transakcja ukończona");
+
+
+            cart = {};
+            document.cookie = 'cart='+JSON.stringify(cart)+";domain=;path=/";
             window.location.href = "{% url 'store' %}";
         })
     }
