@@ -10,14 +10,19 @@
                     <th><h5>Przedmioty: <strong>{{order.get_cart_items}}</strong></h5></th>
                     <th><h5>Koszt całości: <strong>{{order.get_cart_total|floatformat:2}} zł</strong></h5></th>
                     <th>
-                        <a style="float: right; margin: 0 8px;" class="btn btn-success" href="{% url 'checkout' %}">Do kasy</a>
+                        <a style="float: right; margin: 0 8px;" class="btn btn-success d-flex" href="{% url 'checkout' %}">
+                        Do kasy
+                        <svg class="ml-2" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z" fill="white"/>
+                        </svg>
+                        </a>
                     </th>
                 </tr>
             </table>
         </div>
         <div class="box-element">
             <div class="cart-row">
-                <div style="flex:2"></div>
+                <div style="flex:1"></div>
                 <div style="flex:2"><strong>Nazwa</strong></div>
                 <div style="flex:1"><strong>Cena</strong></div>
                 <div style="flex:1"><strong>Ilość</strong></div>
@@ -25,14 +30,22 @@
             </div>
             {% for item in items %}
             <div class="cart-row">
-                <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+                <div style="flex:1"><img class="row-image" src="{{item.product.imageURL}}"></div>
                 <div style="flex:2"><p>{{item.product.name}}</p></div>
                 <div style="flex:1"><p>{{item.product.price|floatformat:2}} zł</p></div>
                 <div style="flex:1">
                     <p class="quantity">{{item.quantity}}</p>
                     <div class="quantity">
-                        <button data-product={{item.product.id}} data-action="add" class="btn update-cart">+</button>
-                        <button data-product={{item.product.id}} data-action="remove" class="btn update-cart">-</button>
+                        <button data-product={{item.product.id}} data-action="add" class="btn pb-0 update-cart">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 11H13V5H11V11H5V13H11V19H13V13H19V11Z" fill="black"/>
+                            </svg>
+                        </button>
+                        <button data-product={{item.product.id}} data-action="remove" class="btn pb-0 update-cart">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 11H19V13H5V11Z" fill="black"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
                 <div style="flex:1"><p>{{item.get_total|floatformat:2}} zł</p></div>

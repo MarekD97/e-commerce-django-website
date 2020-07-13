@@ -1,0 +1,28 @@
+{% extends 'store/main.html' %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <a class="btn btn-secondary mb-3" href="{% url 'store' %}">&#x2190; Wróć do sklepu</a>
+    </div>
+    <div class="col-lg-6 offset-lg-3">
+        <div class="box-element p-2">
+            <h1>Zarejestruj się</h1>
+            <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <button class="btn btn-secondary" type="submit">{% trans "Sign Up" %} &raquo;</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

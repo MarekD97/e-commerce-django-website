@@ -1,0 +1,28 @@
+{% extends 'store/main.html' %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <a class="btn btn-secondary mb-3" href="{% url 'store' %}">&#x2190; Wróć do sklepu</a>
+    </div>
+    <div class="col-lg-6 offset-lg-3">
+        <div class="box-element p-2">
+            <h1>Wyloguj się</h1>
+            <p>Jesteś pewny, że chcesz się wylogować ?</p>
+            <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <button class="btn btn-secondary" type="submit">{% trans "Sign Out" %}</button>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

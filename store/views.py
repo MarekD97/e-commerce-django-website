@@ -10,8 +10,11 @@ def store(request):
     data = cartData(request)
     cartItems = data['cartItems']
 
+    viewType = json.loads(request.COOKIES.get('view'))['viewType']
+    print(viewType)
     products = Product.objects.all()
-    context = {'products': products, 'cartItems': cartItems}
+    context = {'products': products,
+               'cartItems': cartItems, 'viewType': viewType}
     return render(request, 'store/store.html', context)
 
 
@@ -33,6 +36,15 @@ def checkout(request):
 
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/checkout.html', context)
+
+
+def product(request, slug):
+    data = cartData(request)
+    cartItems = data['cartItems']
+
+    product = Product.objects.get(id=slug)
+    context = {'product': product, 'cartItems': cartItems}
+    return render(request, 'store/product.html', context)
 
 
 def updateItem(request):
@@ -76,7 +88,7 @@ def processOrder(request):
     else:
         customer, order = guestOrder(request, data)
 
-    total = float(data['form']['total'])
+    total = float(data['form']['total'].replace(',', '.'))
     order.transaction_id = transaction_id
 
     if total == order.get_cart_total:
