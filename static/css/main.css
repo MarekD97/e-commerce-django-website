@@ -59,3 +59,15 @@ footer {
 .login, .signup {
     text-align: right;
 }
+
+#make-payment {
+    width: 50%;
+    height: 120px;
+    background-size: cover;
+    background-color: transparent;
+    transition: transform .3s ease-in;
+}
+
+#make-payment:hover {
+    transform: scale(1.05);
+}

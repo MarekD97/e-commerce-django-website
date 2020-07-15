@@ -68,10 +68,6 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
 
-    @property
-    def get_total_amount(self):
-        return int(self.get_cart_total*100)
-
 
 class OrderItem(models.Model):
     product = models.ForeignKey(

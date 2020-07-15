@@ -1,0 +1,13 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="box-element">
+            <h3>Dziękujemy za zakupy.</h3>
+            <p>Płatność przeprowadzona pomyślnie.</p>
+            <a href="{% url 'store' %}" class="btn btn-secondary">Powrót do sklepu</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
