@@ -11,7 +11,10 @@ def store(request):
     data = cartData(request)
     cartItems = data['cartItems']
 
-    viewType = json.loads(request.COOKIES.get('view'))['viewType']
+    try:
+        viewType = json.loads(request.COOKIES.get('view'))['viewType']
+    except:
+        viewType = 'grid_view'
     print(viewType)
     products = Product.objects.all()
     context = {'products': products,
