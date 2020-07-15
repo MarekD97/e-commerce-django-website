@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'svc(=stl#$!4%zk2y=#_i6^a2%l4_&w8w@l%=num%-su55ef=2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['ecommerce-website-giti.herokuapp.com', '127.0.0.1']
 
