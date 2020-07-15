@@ -93,25 +93,27 @@
         //submitFormData();
         payment();
     })
-    function payment() {
-        var request = new XMLHttpRequest();
+
+    function createANewOrder(paymentToken) {
+        let request = new XMLHttpRequest();
 
         request.open('POST', 'https://cors-anywhere.herokuapp.com/https://private-anon-adac35be7d-payu21.apiary-mock.com/api/v2_1/orders/');
 
         request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('Authorization', 'Bearer 3e5cac39-7e38-4139-8fd6-30adc06a61bd');
+        request.setRequestHeader('Authorization', 'Bearer '+paymentToken);
+        console.log('Authorization: '+'Bearer '+paymentToken)
 
         request.onreadystatechange = function () {
         if (this.readyState === 4) {
             console.log('Status:', this.status);
             console.log('Headers:', this.getAllResponseHeaders());
             console.log('Body:', this.responseText);
-            window.open(this.getResponseHeader('x-final-url'), '_blank')
+            //window.open(this.getResponseHeader('x-final-url'), '_blank')
             //window.location.href = this.getResponseHeader('x-final-url');
         }
         };
 
-        var body = {
+        let body = {
         'notifyUrl': 'https://your.eshop.com/notify',
         'customerIp': '127.0.0.1',
         'merchantPosId': '391103',
@@ -133,6 +135,29 @@
         };
 
         request.send(JSON.stringify(body));
+    }
+
+    function payment() {
+        let request = new XMLHttpRequest();
+
+        request.open('POST', 'https://private-anon-adac35be7d-payu21.apiary-mock.com/pl/standard/user/oauth/authorize');
+
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        request.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            //console.log('Status:', this.status);
+            //console.log('Headers:', this.getAllResponseHeaders());
+            //console.log('Body:', this.responseText);
+
+            let paymentToken = JSON.parse(this.responseText).access_token;
+            createANewOrder(paymentToken);
+        }
+        };
+
+        let body = "grant_type=client_credentials&client_id=391103&client_secret=c23c292007be0fc8cf7d05466a8b495a";
+
+        request.send(body);
     }
 
     function submitFormData() {
