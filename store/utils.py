@@ -1,5 +1,6 @@
 import json
 from .models import *
+from django.core.exceptions import MultipleObjectsReturned
 
 
 def cookieCart(request):
