@@ -4,6 +4,7 @@ import json
 import datetime
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
+from urllib.request import Request, urlopen
 
 
 def store(request):

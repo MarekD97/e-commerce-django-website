@@ -90,8 +90,49 @@
     })
 
     document.getElementById('make-payment').addEventListener('click', function(e) {
-        submitFormData();
+        //submitFormData();
+        payment();
     })
+    function payment() {
+        var request = new XMLHttpRequest();
+
+        request.open('POST', 'https://secure.payu.com/api/v2_1/orders/');
+
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('Authorization', 'Bearer 3e5cac39-7e38-4139-8fd6-30adc06a61bd');
+
+        request.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            console.log('Status:', this.status);
+            console.log('Headers:', this.getAllResponseHeaders());
+            console.log('Body:', this.responseText);
+        }
+        };
+
+        var body = {
+        'notifyUrl': 'https://your.eshop.com/notify',
+        'customerIp': '127.0.0.1',
+        'merchantPosId': '145227',
+        'description': 'RTV market',
+        'currencyCode': 'PLN',
+        'totalAmount': '21000',
+        'products': [
+            {
+            'name': 'Wireless mouse',
+            'unitPrice': '15000',
+            'quantity': '1'
+            },
+            {
+            'name': 'HDMI cable',
+            'unitPrice': '6000',
+            'quantity': '1'
+            }
+        ]
+        };
+
+        request.send(JSON.stringify(body));
+    }
+
     function submitFormData() {
         console.log('Payment button click');
 
