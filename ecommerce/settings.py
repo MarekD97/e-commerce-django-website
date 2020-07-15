@@ -133,9 +133,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -152,3 +149,6 @@ MEDIA_URL = '/images/'
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
