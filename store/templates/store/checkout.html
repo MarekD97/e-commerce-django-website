@@ -57,9 +57,24 @@
         </div>
         <div class="box-element hidden" id="payment-info">
             <small>Opcje płatności</small>
-            <button class="btn btn-secondary" id="make-payment">Zrealizuj płatność</button>
+            <button style="background-image: url('{% static 'PAYU_LOGO_LIME.png' %}')" class="btn btn-secondary" id="make-payment" data-toggle="modal" data-target="#paymentModal"></button>
         </div>
     </div>
+</div>
+<div id="paymentModal" class="modal fade hidden" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Oczekiwanie na płatność</h4>
+      </div>
+      <div class="modal-body">
+        <p>Zostaniesz przekierowany na stronę płatności PayU. Po zakończeniu transakcji zostaniesz powiadomiony o przyjęciu zamówienia.</p>
+      </div>
+    </div>
+
+  </div>
 </div>
 <script type="text/javascript">
     var shipping = '{{order.shipping}}';
@@ -90,8 +105,49 @@
     })
 
     document.getElementById('make-payment').addEventListener('click', function(e) {
-        submitFormData();
+        //submitFormData();
+        document.body.style.cursor='wait';
+        payment();
     })
+
+    function payment() {
+        var request = new XMLHttpRequest();
+        request.open('POST', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders');
+
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
+
+        request.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            console.log('Status:', this.status);
+            console.log('Headers:', this.getAllResponseHeaders());
+            console.log('Body:', this.responseText);
+            window.open(this.getResponseHeader('x-final-url'), '_self');
+             document.body.style.cursor='default';
+        }
+        };
+
+        var body = {
+        'continueUrl': 'https://ecommerce-website-giti.herokuapp.com/success',
+        'customerIp': '{{clientIP}}',
+        'merchantPosId': '300746',
+        'description': 'Księgarnia online',
+        'currencyCode': 'PLN',
+        'totalAmount': '{% widthratio order.get_cart_total 1 100 %}',
+        'products': [
+        {% for item in items %}
+            {
+            'name': '{{item.product.name}}',
+            'unitPrice': '{% widthratio item.product.price 1 100 %}',
+            'quantity': '{{item.quantity}}'
+            },
+        {% endfor %}
+        ]
+        };
+
+        request.send(JSON.stringify(body));
+    }
+
     function submitFormData() {
         console.log('Payment button click');
 

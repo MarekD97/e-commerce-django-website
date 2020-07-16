@@ -4,13 +4,17 @@ import json
 import datetime
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
+from urllib.request import Request, urlopen
 
 
 def store(request):
     data = cartData(request)
     cartItems = data['cartItems']
 
-    viewType = json.loads(request.COOKIES.get('view'))['viewType']
+    try:
+        viewType = json.loads(request.COOKIES.get('view'))['viewType']
+    except:
+        viewType = 'grid_view'
     print(viewType)
     products = Product.objects.all()
     context = {'products': products,
@@ -34,7 +38,14 @@ def checkout(request):
     order = data['order']
     items = data['items']
 
-    context = {'items': items, 'order': order, 'cartItems': cartItems}
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    context = {'items': items, 'order': order,
+               'cartItems': cartItems, 'clientIP': ip}
     return render(request, 'store/checkout.html', context)
 
 
@@ -105,3 +116,8 @@ def processOrder(request):
         )
 
     return JsonResponse('Payment complete!', safe=False)
+
+
+def success(request):
+    context = {}
+    return render(request, 'store/success.html', context)
