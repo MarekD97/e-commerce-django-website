@@ -71,6 +71,7 @@
       </div>
       <div class="modal-body">
         <p>Zostaniesz przekierowany na stronę płatności PayU. Po zakończeniu transakcji zostaniesz powiadomiony o przyjęciu zamówienia.</p>
+        <p>Czas na wykonanie transakcji: <span id="timer">01:45</span></p>
       </div>
     </div>
 
@@ -144,6 +145,7 @@
         'merchantPosId': '300746',
         'description': 'Księgarnia online',
         'currencyCode': 'PLN',
+        'validityTime': '90',
         'totalAmount': '{% widthratio order.get_cart_total 1 100 %}',
         'products': [
         {% for item in items %}
@@ -159,11 +161,46 @@
         request.send(JSON.stringify(body));
     }
 
-    function paymentCheckStatus(orderId) {
-  
+    async function paymentCheckStatus(orderId) {
+        let timerContainer = document.getElementById('timer');
+        let counter = 90;
+        setInterval(function(){
+            counter--;
+            timerContainer.innerHTML = '0'+parseInt(counter/60)+':'+parseInt((counter%60)/10)+parseInt((counter%60)%10);
+            if(counter%3==0 && counter>-1) {
+                var request = new XMLHttpRequest();
+
+                request.open('GET', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders/'+orderId, true);
+
+                request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
+
+                request.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    console.log('Status:', this.status);
+                    console.log('Headers:', this.getAllResponseHeaders());
+                    console.log('Body:', this.responseText);
+                    paymentStatus = JSON.parse(this.responseText).orders[0].status;
+                    if(counter<=0)
+                        paymentStatus = 'CANCELED';
+                    console.log(paymentStatus);
+                    if(paymentStatus == 'COMPLETED') {
+                        submitFormData();
+                    }
+                    else if(paymentStatus == 'CANCELED') {
+                        cancelOrder(orderId);
+                    }
+                }
+                };
+                request.send();
+            }
+        }, 1000);
+
+    }
+
+    function cancelOrder(orderId) {
         var request = new XMLHttpRequest();
 
-        request.open('GET', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders/'+orderId, true);
+        request.open('DELETE', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders/'+orderId);
 
         request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
 
@@ -172,25 +209,11 @@
             console.log('Status:', this.status);
             console.log('Headers:', this.getAllResponseHeaders());
             console.log('Body:', this.responseText);
-            paymentStatus = JSON.parse(this.responseText).orders[0].status;
-            console.log(paymentStatus);
-            if(paymentStatus == 'COMPLETED') {
-                submitFormData();
-            }
-            else if(paymentStatus == 'CANCELED') {
-                window.location.href = "{% url 'fail' %}";
-            }
-            else {
-                if(this.status==200)
-                    paymentCheckStatus(orderId);
-                else
-                    window.location.href = "{% url 'fail' %}";
-            }
+            window.location.href = "{% url 'fail' %}";
         }
         };
 
         request.send();
-
     }
 
     function submitFormData() {
