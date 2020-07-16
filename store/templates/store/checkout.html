@@ -181,7 +181,10 @@
                 window.location.href = "{% url 'fail' %}";
             }
             else {
-                paymentCheckStatus(orderId);
+                if(this.status==200)
+                    paymentCheckStatus(orderId);
+                else
+                    window.location.href = "{% url 'fail' %}";
             }
         }
         };
