@@ -4,7 +4,8 @@ import json
 import datetime
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
-from urllib.request import Request, urlopen
+from urllib.request import urlopen, Request
+import urllib
 
 
 def store(request):
@@ -121,3 +122,13 @@ def processOrder(request):
 def success(request):
     context = {}
     return render(request, 'store/success.html', context)
+
+
+def fail(request):
+    context = {}
+    return render(request, 'store/fail.html', context)
+
+
+def payment_complete(request):
+    context = {}
+    return render(request, 'store/payment_complete.html', context)

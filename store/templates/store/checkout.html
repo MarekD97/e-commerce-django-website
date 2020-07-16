@@ -79,6 +79,7 @@
 <script type="text/javascript">
     var shipping = '{{order.shipping}}';
     var total = '{{order.get_cart_total}}';
+    var orderId;
 
     if(shipping=='False') {
         document.getElementById('shipping-info').innerHTML = '';
@@ -112,23 +113,33 @@
 
     function payment() {
         var request = new XMLHttpRequest();
-        request.open('POST', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders');
+
+
+        request.open('POST', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders', true);
 
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
 
         request.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            console.log('Status:', this.status);
-            console.log('Headers:', this.getAllResponseHeaders());
-            console.log('Body:', this.responseText);
-            window.open(this.getResponseHeader('x-final-url'), '_self');
-             document.body.style.cursor='default';
-        }
+
+            if (this.readyState === 4) {
+                //console.log('Status:', this.status);
+                //console.log('Headers:', this.getAllResponseHeaders());
+                //console.log('Body:', this.responseText);
+                window.open(this.getResponseHeader('x-final-url'), '_blank');
+                document.body.style.cursor='default';
+
+                let url = decodeURI(this.getResponseHeader('x-final-url'));
+                url = url.substring(url.indexOf('?'));
+                let searchParams = new URLSearchParams(url);
+                orderId = searchParams.get('orderId');
+                console.log(searchParams.get('orderId'));
+                paymentCheckStatus(orderId);
+            }
         };
 
         var body = {
-        'continueUrl': 'https://ecommerce-website-giti.herokuapp.com/success',
+        'continueUrl': 'https://ecommerce-website-giti.herokuapp.com/payment_complete',
         'customerIp': '{{clientIP}}',
         'merchantPosId': '300746',
         'description': 'Księgarnia online',
@@ -146,6 +157,37 @@
         };
 
         request.send(JSON.stringify(body));
+    }
+
+    function paymentCheckStatus(orderId) {
+  
+        var request = new XMLHttpRequest();
+
+        request.open('GET', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders/'+orderId, true);
+
+        request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
+
+        request.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            console.log('Status:', this.status);
+            console.log('Headers:', this.getAllResponseHeaders());
+            console.log('Body:', this.responseText);
+            paymentStatus = JSON.parse(this.responseText).orders[0].status;
+            console.log(paymentStatus);
+            if(paymentStatus == 'COMPLETED') {
+                submitFormData();
+            }
+            else if(paymentStatus == 'CANCELED') {
+                window.location.href = "{% url 'fail' %}";
+            }
+            else {
+                paymentCheckStatus(orderId);
+            }
+        }
+        };
+
+        request.send();
+
     }
 
     function submitFormData() {
@@ -187,12 +229,12 @@
         .then((response)=>response.json())
         .then((data)=> {
             console.log('Success:', data);
-            alert("Transakcja ukończona");
+            //alert("Transakcja ukończona");
 
 
             cart = {};
             document.cookie = 'cart='+JSON.stringify(cart)+";domain=;path=/";
-            window.location.href = "{% url 'store' %}";
+            window.location.href = "{% url 'success' %}";
         })
     }
 </script>
