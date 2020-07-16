@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import dj_database_url
 import os
 import django_heroku
 
@@ -26,7 +27,11 @@ SECRET_KEY = 'svc(=stl#$!4%zk2y=#_i6^a2%l4_&w8w@l%=num%-su55ef=2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ecommerce-website-giti.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'ecommerce-website-giti.herokuapp.com',
+    '127.0.0.1',
+    'cfehome.herokuapp.com'
+]
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -98,6 +103,9 @@ DATABASES = {
     }
 }
 
+DB_FROM_ENV = dj_database_url.config()
+DATABASES['default'].update(DB_FROM_ENV)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -144,7 +152,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, '/media/images/')
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
