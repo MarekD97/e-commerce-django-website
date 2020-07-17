@@ -163,8 +163,8 @@
             order.lastname = form.lastname.value;
             order.email = form.email.value;
         } else {
-            order.firstname = '{{order.customer.firstname}}';
-            order.lastname = '{{order.customer.lastname}}';
+            order.firstname = '{{order.customer.name}}';
+            order.lastname = '';
             order.email = '{{order.customer.email}}';
         }
 
@@ -177,9 +177,9 @@
         'validityTime': '90',
         'totalAmount': '{% widthratio order.get_cart_total 1 100 %}',
         "buyer": {
-            "email": "john.doe@example.com",
-            "firstName": "John",
-            "lastName": "Doe",
+            "email": order.email,
+            "firstName": order.firstname,
+            "lastName": order.lastname,
             "language": "pl"
         },
         'products': [
@@ -192,7 +192,6 @@
         {% endfor %}
         ]
         };
-
         request.send(JSON.stringify(body));
     }
 
@@ -247,11 +246,9 @@
     }
 
     function submitFormData() {
-        console.log('Payment button click');
 
         var userFormData = {
-            'firstname':null,
-            'lastname':null,
+            'name':null,
             'email':null,
             'total':total,
         }
@@ -269,8 +266,7 @@
         }
 
         if(user=='AnonymousUser') {
-            userFormData.firstname = form.firstname.value;
-            userFormData.lastname = form.lastname.value;
+            userFormData.name = form.firstname.value+' '+form.lastname.value;
             userFormData.email = form.email.value;
 
         }

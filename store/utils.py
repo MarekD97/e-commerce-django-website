@@ -49,8 +49,7 @@ def cartData(request):
         except:
             customer, created = Customer.objects.get_or_create(
                 user=request.user,
-                firstname=request.user.username,
-                lastname="",
+                name=request.user.username,
                 email=request.user.email
             )
         order, created = Order.objects.get_or_create(
