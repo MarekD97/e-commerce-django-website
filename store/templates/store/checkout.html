@@ -71,7 +71,7 @@
       </div>
       <div class="modal-body">
         <p>Zostaniesz przekierowany na stronę płatności PayU. Po zakończeniu transakcji zostaniesz powiadomiony o przyjęciu zamówienia.</p>
-        <p>Czas na wykonanie transakcji: <span id="timer">01:45</span></p>
+        <p>Czas na wykonanie transakcji: <span id="timer">01:30</span></p>
       </div>
     </div>
 
@@ -260,7 +260,7 @@
 
             cart = {};
             document.cookie = 'cart='+JSON.stringify(cart)+";domain=;path=/";
-            window.location.href = "{% url 'success' %}";
+            window.location = "{% url 'success' %}";
         })
     }
 </script>
