@@ -1,64 +1,84 @@
 {% extends 'store/main.html' %}
 {% load static %}
 {% block content %}
-<div class="row">
-    <div class="col-lg-12">
+<div class="container">
         <div class="box-element">
             <a class="btn btn-secondary mb-3" href="{% url 'store' %}">&#x2190; Wróć do sklepu</a>
             {% if order.get_cart_items == 0 %}
             <h5 class="mt-2">Brak przedmiotów w koszyku.</h5>
             {% else %}
-            <table class="table">
-                <tr>
-                    <th><h5>Przedmioty: <strong>{{order.get_cart_items}}</strong></h5></th>
-                    <th><h5>Koszt całości: <strong>{{order.get_cart_total|floatformat:2}} zł</strong></h5></th>
-                    <th>
-                        <a style="float: right; margin: 0 8px;" class="btn btn-success d-flex" href="{% url 'checkout' %}">
-                        Do kasy
-                        <svg class="ml-2" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z" fill="white"/>
-                        </svg>
-                        </a>
-                    </th>
-                </tr>
-            </table>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Przedmioty: <strong>{{order.get_cart_items}}</strong></h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>Koszt całości: <strong>{{order.get_cart_total|floatformat:2}} zł</strong></h5>
+                </div>
+                <div class="col-md-4">
+                    <a style="float: right; margin: 0 8px;" class="btn btn-success d-flex" href="{% url 'checkout' %}">
+                    Do kasy
+                    <svg class="ml-2" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z" fill="white"/>
+                    </svg>
+                    </a>
+                </div>
+            </div>
             {% endif %}
         </div>
         {% if order.get_cart_items != 0 %}
         <div class="box-element">
-            <div class="cart-row">
-                <div style="flex:1"></div>
-                <div style="flex:2"><strong>Nazwa</strong></div>
-                <div style="flex:1"><strong>Cena</strong></div>
-                <div style="flex:1"><strong>Ilość</strong></div>
-                <div style="flex:1"><strong>Całość</strong></div>
+            <div class="row d-none d-md-flex">
+                <div class="col-2"></div>
+                <div class="col-3">
+                    <strong>Nazwa</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Cena</strong>
+                </div>
+                <div class="col-3">
+                    <strong>Ilość</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Całość</strong>
+                </div>
             </div>
             {% for item in items %}
-            <div class="cart-row">
-                <div style="flex:1"><img class="row-image" src="{{item.product.imageURL}}"></div>
-                <div style="flex:2"><p>{{item.product.name}}</p></div>
-                <div style="flex:1"><p>{{item.product.price|floatformat:2}} zł</p></div>
-                <div style="flex:1">
-                    <p class="quantity">{{item.quantity}}</p>
+            <div class="row mb-2">
+                <div class="col-4 col-md-2">
+                    <img class="row-image" src="{{item.product.imageURL}}">
+                </div>
+                <div class="col-4 col-md-3">
+                    <strong class="d-md-none">Nazwa</strong>
+                    <p>{{item.product.name}}</p>
+                </div>
+                <div class="col-4 col-md-2">
+                    <strong class="d-md-none">Cena</strong>
+                    <p>{{item.product.price|floatformat:2}} zł</p>
+                </div>
+                <div class="col-8 col-md-3">
+                    <strong class="d-md-none">Ilość</strong>
                     <div class="quantity">
-                        <button data-product={{item.product.id}} data-action="add" class="btn pb-0 update-cart">
+                        <button data-product={{item.product.id}} data-action="add" class="btn pb-0 mr-2 update-cart">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 11H13V5H11V11H5V13H11V19H13V13H19V11Z" fill="black"/>
                             </svg>
                         </button>
-                        <button data-product={{item.product.id}} data-action="remove" class="btn pb-0 update-cart">
+                        {{item.quantity}} szt.
+                        <button data-product={{item.product.id}} data-action="remove" class="btn pb-0 ml-2 update-cart">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M5 11H19V13H5V11Z" fill="black"/>
                             </svg>
                         </button>
                     </div>
                 </div>
-                <div style="flex:1"><p>{{item.get_total|floatformat:2}} zł</p></div>
+                <div class="col-4 col-md-2">
+                    <strong class="d-md-none">Całość</strong>
+                    <p>{{item.get_total|floatformat:2}} zł</p>
+                </div>
             </div>
             {% endfor %}
         
         </div>
         {% endif %}
-    </div>
 </div>
 {% endblock content %}

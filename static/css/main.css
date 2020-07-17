@@ -28,7 +28,7 @@ footer {
 }
 
 .row-image {
-    width: 40%;
+    width: 100%;
 }
 
 .box-element {
@@ -65,13 +65,16 @@ footer {
 }
 
 #make-payment {
-    width: 50%;
-    height: 120px;
-    background-size: cover;
-    background-color: transparent;
+    width: 35%;
+    background: transparent;
     transition: transform .3s ease-in;
 }
 
+#make-payment img {
+    width: 100%;
+    height: auto;
+}
+
 #make-payment:hover {
-    transform: scale(1.05);
+    background: #f5f5f5;
 }

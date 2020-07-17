@@ -5,11 +5,15 @@ from django.db import models
 class Customer(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=128, null=True)
+    firstname = models.CharField(max_length=128, null=True)
+    lastname = models.CharField(max_length=128, null=True)
     email = models.CharField(max_length=128, null=True)
 
     def __str__(self):
-        return self.name
+        try:
+            return self.firstname+" "+self.lastname
+        except:
+            return self.firstname
 
 
 class Product(models.Model):
