@@ -8,12 +8,32 @@
             <hr>
             <h3>Podsumowanie zamówienia</h3>
             <hr>
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <strong>Nazwa</strong>
+                </div>
+                <div class="col-3">
+                    <strong>Cena</strong>
+                </div>
+                <div class="col-3">
+                    <strong>Ilość</strong>
+                </div>
+            </div>
             {% for item in items %}
-            <div class="cart-row">
-                <div style="flex:2"><img src="{{item.product.imageURL}}" class="row-image"></div>
-                <div style="flex:2"><p>{{item.product.name}}</p></div>
-                <div style="flex:1"><p>{{item.product.price|floatformat:2}} zł</p></div>
-                <div style="flex:1"><p>{{item.quantity}}</p></div>
+            <div class="row mb-2">
+                <div class="col-3">
+                    <img class="row-image" src="{{item.product.imageURL}}">
+                </div>
+                <div class="col-3">
+                    <p>{{item.product.name}}</p>
+                </div>
+                <div class="col-3">
+                    <p>{{item.product.price|floatformat:2}} zł</p>
+                </div>
+                <div class="col-3">
+                        <p>{{item.quantity}} szt.</p>
+                </div>
             </div>
             {% endfor %}
             <h5>Przedmiotów: {{order.get_cart_items}}</h5>
@@ -56,21 +76,22 @@
             </form>
         </div>
         <div class="box-element hidden" id="payment-info">
-            <small>Opcje płatności</small>
-            <button style="background-image: url('{% static 'PAYU_LOGO_LIME.png' %}')" class="btn btn-secondary" id="make-payment" data-toggle="modal" data-target="#paymentModal"></button>
+            <p>Opcje płatności</p>
+            <button class="btn btn-secondary" id="make-payment" data-toggle="modal" data-target="#paymentModal">
+                <img src="{% static 'PAYU_LOGO_LIME.png' %}" alt="Zapłać przez PayU">
+            </button>
         </div>
     </div>
 </div>
-<div id="paymentModal" class="modal fade hidden" role="dialog">
+<div id="paymentModal" class="modal fade hidden" role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
-
-    <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Oczekiwanie na płatność</h4>
       </div>
       <div class="modal-body">
         <p>Zostaniesz przekierowany na stronę płatności PayU. Po zakończeniu transakcji zostaniesz powiadomiony o przyjęciu zamówienia.</p>
+        <p>Czas na wykonanie transakcji: <span id="timer">01:30</span></p>
       </div>
     </div>
 
@@ -79,6 +100,7 @@
 <script type="text/javascript">
     var shipping = '{{order.shipping}}';
     var total = '{{order.get_cart_total}}';
+    var orderId;
 
     if(shipping=='False') {
         document.getElementById('shipping-info').innerHTML = '';
@@ -93,8 +115,6 @@
         document.getElementById('payment-info').classList.remove('hidden');
     }
 
-
-
     var form = document.getElementById('form');
 
     form.addEventListener('submit', function(e) {
@@ -105,35 +125,63 @@
     })
 
     document.getElementById('make-payment').addEventListener('click', function(e) {
-        //submitFormData();
         document.body.style.cursor='wait';
         payment();
     })
 
     function payment() {
         var request = new XMLHttpRequest();
-        request.open('POST', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders');
+
+
+        request.open('POST', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders', true);
 
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
 
         request.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            console.log('Status:', this.status);
-            console.log('Headers:', this.getAllResponseHeaders());
-            console.log('Body:', this.responseText);
-            window.open(this.getResponseHeader('x-final-url'), '_self');
-             document.body.style.cursor='default';
-        }
+
+            if (this.readyState === 4) {
+                window.open(this.getResponseHeader('x-final-url'), '_blank');
+                document.body.style.cursor='default';
+
+                let url = decodeURI(this.getResponseHeader('x-final-url'));
+                url = url.substring(url.indexOf('?'));
+                let searchParams = new URLSearchParams(url);
+                orderId = searchParams.get('orderId');
+                paymentCheckStatus(orderId);
+            }
         };
 
+        let order = {
+            firstname: null,
+            lastname: null,
+            email: null
+        }
+
+        if(user=='AnonymousUser') {
+            order.firstname = form.firstname.value;
+            order.lastname = form.lastname.value;
+            order.email = form.email.value;
+        } else {
+            order.firstname = '{{order.customer.firstname}}';
+            order.lastname = '{{order.customer.lastname}}';
+            order.email = '{{order.customer.email}}';
+        }
+
         var body = {
-        'continueUrl': 'https://ecommerce-website-giti.herokuapp.com/success',
+        'continueUrl': 'https://ecommerce-website-giti.herokuapp.com/payment_complete',
         'customerIp': '{{clientIP}}',
         'merchantPosId': '300746',
         'description': 'Księgarnia online',
         'currencyCode': 'PLN',
+        'validityTime': '90',
         'totalAmount': '{% widthratio order.get_cart_total 1 100 %}',
+        "buyer": {
+            "email": "john.doe@example.com",
+            "firstName": "John",
+            "lastName": "Doe",
+            "language": "pl"
+        },
         'products': [
         {% for item in items %}
             {
@@ -148,11 +196,62 @@
         request.send(JSON.stringify(body));
     }
 
+    async function paymentCheckStatus(orderId) {
+        let timerContainer = document.getElementById('timer');
+        let counter = 90;
+        setInterval(function() {
+            timerContainer.innerHTML = '0'+parseInt(counter/60)+':'+parseInt((counter%60)/10)+parseInt((counter%60)%10);
+            if(counter%10==0 && counter>0) {
+                var request = new XMLHttpRequest();
+
+                request.open('GET', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders/'+orderId, true);
+
+                request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
+
+                request.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    paymentStatus = JSON.parse(this.responseText).orders[0].status;
+                    if(paymentStatus == 'COMPLETED') {
+                        submitFormData();
+                    }
+                    else if(paymentStatus == 'CANCELED') {
+                        cancelOrder(orderId);
+                    }
+                }
+                };
+                request.send();
+            }
+            counter--;
+            if(counter<0) {
+                cancelOrder(orderId);
+                clearInterval(this);
+            }
+        }, 1000);
+
+    }
+
+    function cancelOrder(orderId) {
+        var request = new XMLHttpRequest();
+
+        request.open('DELETE', 'https://cors-anywhere.herokuapp.com/https://secure.snd.payu.com/api/v2_1/orders/'+orderId);
+
+        request.setRequestHeader('Authorization', 'Bearer d9a4536e-62ba-4f60-8017-6053211d3f47');
+
+        request.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            window.location = "{% url 'fail' %}";
+        }
+        };
+
+        request.send();
+    }
+
     function submitFormData() {
         console.log('Payment button click');
 
         var userFormData = {
-            'name':null,
+            'firstname':null,
+            'lastname':null,
             'email':null,
             'total':total,
         }
@@ -170,7 +269,8 @@
         }
 
         if(user=='AnonymousUser') {
-            userFormData.name = form.firstname.value+' '+form.lastname.value;
+            userFormData.firstname = form.firstname.value;
+            userFormData.lastname = form.lastname.value;
             userFormData.email = form.email.value;
 
         }
@@ -186,13 +286,10 @@
         })
         .then((response)=>response.json())
         .then((data)=> {
-            console.log('Success:', data);
-            alert("Transakcja ukończona");
-
 
             cart = {};
             document.cookie = 'cart='+JSON.stringify(cart)+";domain=;path=/";
-            window.location.href = "{% url 'store' %}";
+            window.location = "{% url 'success' %}";
         })
     }
 </script>

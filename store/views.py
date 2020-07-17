@@ -4,7 +4,6 @@ import json
 import datetime
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
-from urllib.request import Request, urlopen
 
 
 def store(request):
@@ -15,7 +14,7 @@ def store(request):
         viewType = json.loads(request.COOKIES.get('view'))['viewType']
     except:
         viewType = 'grid_view'
-    print(viewType)
+
     products = Product.objects.all()
     context = {'products': products,
                'cartItems': cartItems, 'viewType': viewType}
@@ -63,9 +62,6 @@ def updateItem(request):
     productId = data['productId']
     action = data['action']
 
-    print('ProductId:', productId)
-    print('Action:', action)
-
     customer = request.user.customer
     product = Product.objects.get(id=productId)
     order, created = Order.objects.get_or_create(
@@ -99,11 +95,10 @@ def processOrder(request):
     else:
         customer, order = guestOrder(request, data)
 
-    total = float(data['form']['total'].replace(',', '.'))
+    total = format(float(data['form']['total'].replace(',', '.')), '.2f')
     order.transaction_id = transaction_id
 
-    if total == order.get_cart_total:
-        order.complete = True
+    order.complete = True
     order.save()
 
     if order.shipping == True:
@@ -119,5 +114,19 @@ def processOrder(request):
 
 
 def success(request):
-    context = {}
+    data = cartData(request)
+    cartItems = data['cartItems']
+    context = {'cartItems': cartItems}
     return render(request, 'store/success.html', context)
+
+
+def fail(request):
+    data = cartData(request)
+    cartItems = data['cartItems']
+    context = {'cartItems': cartItems}
+    return render(request, 'store/fail.html', context)
+
+
+def payment_complete(request):
+    context = {}
+    return render(request, 'store/payment_complete.html', context)
