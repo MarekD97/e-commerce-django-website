@@ -1,0 +1,80 @@
+body {
+    font-family: 'Crimson Text', serif;
+    margin: 0;
+}
+
+footer {
+    background-color: #f5f5f5;
+    padding: 0 16px;
+}
+
+.thumbnail {
+    width: 100%;
+    height: auto;
+}
+
+.navbar {
+    background-color: #ffffff;
+    padding: 8px 32px;
+}
+
+.navbar-brand {
+    text-transform: uppercase;
+}
+
+.navbar .nav-icon {
+    width: 24px;
+    height: auto;
+}
+
+.row-image {
+    width: 100%;
+}
+
+.box-element {
+    background-color: #ffffff;
+    border-bottom: #f0f0f0;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.cart-row {
+    display: flex;
+}
+
+.hidden {
+    display: none;
+}
+
+.view-icon {
+    width: 24px;
+    height: auto;
+    margin: 0;
+}
+
+.list-image {
+    width: 100%;
+}
+
+.login, .signup {
+    text-align: right;
+}
+
+.container {
+    min-height: 90vh;
+}
+
+#make-payment {
+    width: 35%;
+    background: transparent;
+    transition: transform .3s ease-in;
+}
+
+#make-payment img {
+    width: 100%;
+    height: auto;
+}
+
+#make-payment:hover {
+    background: #f5f5f5;
+}

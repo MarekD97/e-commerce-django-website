@@ -154,7 +154,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/images')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/images')
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
