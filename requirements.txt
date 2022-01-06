@@ -9,7 +9,7 @@ beautifulsoup4==4.8.2
 billiard==3.6.3.0
 boto3==1.14.20
 botocore==1.17.20
-celery==4.4.6
+celery==5.2.2
 certifi==2019.9.11
 chardet==3.0.4
 Click==7.0
